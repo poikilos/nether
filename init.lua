@@ -40,38 +40,6 @@ local function build_portal(pos, target)
 	end
 end
 
-
-local function volume_is_natural(minp, maxp)
-	local c_air = minetest.get_content_id("air")
-	local c_ignore = minetest.get_content_id("ignore")
-
-	local vm = minetest.get_voxel_manip()
-	local pos1 = {x = minp.x, y = minp.y, z = minp.z}
-	local pos2 = {x = maxp.x, y = maxp.y, z = maxp.z}
-	local emin, emax = vm:read_from_map(pos1, pos2)
-	local area = VoxelArea:new({MinEdge = emin, MaxEdge = emax})
-	local data = vm:get_data()
-
-	for z = pos1.z, pos2.z do
-	for y = pos1.y, pos2.y do
-		local vi = area:index(pos1.x, y, z)
-		for x = pos1.x, pos2.x do
-			local id = data[vi] -- Existing node
-			if id ~= c_air and id ~= c_ignore then -- These are natural
-				local name = minetest.get_name_from_content_id(id)
-				if not minetest.registered_nodes[name].is_ground_content then
-					return false
-				end
-			end
-			vi = vi + 1
-		end
-	end
-	end
-
-	return true
-end
-
-
 local function move_check(p1, max, dir)
 	local p = {x = p1.x, y = p1.y, z = p1.z}
 	local d = math.abs(max - p1[dir]) / (max - p1[dir])
@@ -209,38 +177,6 @@ minetest.register_abm({
 			false, --collisiondetection
 			"nether_particle.png" --texture
 		})
-		for _, obj in ipairs(minetest.get_objects_inside_radius(pos, 1)) do
-			if obj:is_player() then
-				local meta = minetest.get_meta(pos)
-				local target = minetest.string_to_pos(meta:get_string("target"))
-				if target then
-					-- teleport the player
-					minetest.after(3, function(o, p, t)
-						local objpos = o:getpos()
-						objpos.y = objpos.y + 0.1 -- Fix some glitches at -8000
-						if minetest.get_node(objpos).name ~= "nether:portal" then
-							return
-						end
-
-						o:setpos(t)
-
-						local function check_and_build_portal(pp, tt)
-							local n = minetest.get_node_or_nil(tt)
-							if n and n.name ~= "nether:portal" then
-								build_portal(tt, pp)
-								minetest.after(2, check_and_build_portal, pp, tt)
-								minetest.after(4, check_and_build_portal, pp, tt)
-							elseif not n then
-								minetest.after(1, check_and_build_portal, pp, tt)
-							end
-						end
-
-						minetest.after(1, check_and_build_portal, p, t)
-
-					end, obj, pos, target)
-				end
-			end
-		end
 	end,
 })
 
