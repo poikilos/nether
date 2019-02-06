@@ -1,4 +1,8 @@
-Nether Mod for Minetest
+# Nether Blocks mod for Minetest
+
+Poikilos' fork is a replacement for nether which does not have The
+Nether, but has nether blocks (including nether:portal generation; but
+the portal doesn't teleport, nor create destination nodes).
 
 ## License of source code:
 
