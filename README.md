@@ -3,6 +3,9 @@
 Poikilos' fork is a replacement for nether which does not have The
 Nether, but has nether blocks (including nether:portal generation; but
 the portal doesn't teleport, nor create destination nodes).
+The nodes are only available via the `/give` command--the purpose of
+this fork is to allow builds from worlds with The Nether to be placed in
+worlds without The Nether.
 
 ## License of source code:
 
